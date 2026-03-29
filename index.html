@@ -250,7 +250,7 @@
 
         async function handleTriggerQuestion(messageContent, responseObj) {
             let hasClickedSource = false;
-            
+            let hasClickedVerify = false;
 
             const dots = document.createElement('div');
             dots.className = 'typing-indicator';
@@ -273,7 +273,8 @@
             messageContent.appendChild(answerLine);
             const textSpan = document.createElement('span');
             answerLine.appendChild(textSpan);
-            
+
+            // Source bubble — inline after answer text
             const sourceBubble = document.createElement('span');
             sourceBubble.className = 'source-bubble';
             sourceBubble.innerHTML = '&#128279; ' + responseObj.sourceLabel;
@@ -287,7 +288,18 @@
             });
             answerLine.appendChild(sourceBubble);
 
-                        const verifyPill = null;
+            // Verify pill — in action row
+            const verifyPill = document.createElement('span');
+            verifyPill.className = 'verify-bubble';
+            verifyPill.textContent = '\u2713 Verify this response';
+            verifyPill.addEventListener('click', () => {
+                if (!hasClickedVerify) {
+                    hasClickedVerify = true;
+                    trackEvent({ type: 'verify_click', topic: responseObj.topic });
+                }
+                showModal('This function is not available at this time.');
+            });
+
             const actionRow = buildActionRow(responseObj.answer, responseObj.topic, verifyPill);
             actionRow.style.visibility = 'hidden';
             messageContent.appendChild(actionRow);
